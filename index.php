@@ -2,18 +2,17 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.0/themes/prism.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.2.7/dist/sweetalert2.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.0/prism.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="assets/css/prism.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>File Manager</h1>
-        <div class="row">
-            <div class="col-md-6">
+        <h1>Hash FileManager</h1>
+        <div class="container">
+            <div class="section">
                 <?php
                 function getFileIcon($fileExtension)
                 {
@@ -71,7 +70,7 @@
                         echo '<li class="list-group-item">';
                         echo '<a href="index.php?file=' . $file . '"><i class="fas fa-' . $icon . '"></i> ' . $basename . '</a>';
                         if (in_array($fileExtension, $textExtensions)) {
-                            echo ' <a href="index.php?edit=' . $file . '" class="btn btn-primary btn-sm">Edit</a>';
+                            echo '<a href="index.php?file='.$file.'" data-toggle="modal" data-target="#editModal" class="btn btn-primary btn-sm">Edit</a>';
                         }
                         echo ' <a href="index.php?delete=' . $file . '" class="btn btn-danger btn-sm">Delete</a>';
                         echo '</li>';
@@ -88,11 +87,12 @@
                     } else {
                         echo '<div class="alert alert-danger">Invalid folder: ' . $requestedFolder . '</div>';
                     }
-                } elseif (isset($_GET['file'])) {
+                } else if (isset($_GET['file'])) {
                     $requestedFile = $_GET['file'];
-
                     if (file_exists($requestedFile)) {
                         $info = pathinfo($requestedFile);
+                        $textExtensions = ['txt', 'log', 'xml', 'html', 'css', 'js', 'php', 'c', 'cpp', 'java', 'py', 'json', 'md'];
+                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
                         $fileExtension = strtolower($info['extension']);
                         if (in_array($fileExtension, $textExtensions)) {
                             echo '<pre><code class="language-' . $fileExtension . '">' . htmlspecialchars(file_get_contents($requestedFile)) . '</code></pre>';
@@ -108,73 +108,17 @@
                     get_folders();
                 }
 
-                if (isset($_GET['edit'])) {
-                    $fileToEdit = $_GET['edit'];
-                    $info = pathinfo($fileToEdit);
-                    $fileExtension = strtolower($info['extension']);
-
-                    if (in_array($fileExtension, $textExtensions)) {
-                        echo '<button class="btn btn-primary btn-sm" onclick="openEditorModal(\'' . $fileToEdit . '\')">Edit</button>';
-                    } else {
-                        echo '<div class="alert alert-warning">Editing is not supported for this file type: ' . $fileExtension . '</div>';
-                    }
-                }
 
                 if (isset($_GET['delete'])) {
-                    // ... Previous code for deletion ...
+                    // ... code for deletion ...
                 }
                 ?>
 
-                <!-- Modal for Editing Files -->
-                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editModalLabel">Edit File Content</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <textarea id="fileContent" class="form-control" rows="10"></textarea>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" onclick="saveFileContent()">Save Changes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.2.7/dist/sweetalert2.all.min.js"></script>
-    <script>
-        function openEditorModal(fileToEdit) {
-            $.get(fileToEdit, function(data) {
-                $('#fileContent').val(data);
-                $('#editModal').modal('show');
-            });
-        }
-
-        function saveFileContent() {
-            const editedContent = $('#fileContent').val();
-            // Implement code to save the edited content to the file.
-
-            // For the sake of this example, display a SweetAlert success message.
-            Swal.fire({
-                icon: 'success',
-                title: 'File Saved',
-                text: 'Your changes have been saved successfully.',
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-            $('#editModal').modal('hide');
-        }
-    </script>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.all.min.js"></script>
+                <script src="assets/js/prism.js"></script>
 </body>
 
 </html>
